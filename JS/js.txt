@@ -1,0 +1,141 @@
+<script type="text/javascript"><!--
+
+$('#review .pagination a').live('click', function() {
+	$('#review').slideUp('slow');
+		
+	$('#review').load(this.href);
+	
+	$('#review').slideDown('slow');
+	
+	return false;
+});			
+
+$('#review').load('index.php?route=product/product/review&product_id=<?php echo $product_id; ?>');
+
+$('#button-review').bind('click', function() {
+	$.ajax({
+		url: 'index.php?route=product/product/write&product_id=<?php echo $product_id; ?>',
+		type: 'post',
+		dataType: 'json',
+		data: 'name=' + encodeURIComponent($('input[name=\'name\']').val()) + '&text=' + encodeURIComponent($('textarea[name=\'text\']').val()) + '&rating=' + encodeURIComponent($('input[name=\'rating\']:checked').val() ? $('input[name=\'rating\']:checked').val() : '') + '&captcha=' + encodeURIComponent($('input[name=\'captcha\']').val()),
+		beforeSend: function() {
+			$('.success, .warning').remove();
+			$('#button-review').attr('disabled', true);
+			$('#review-title').after('<div class="attention"><img src="catalog/view/theme/default/image/loading.gif" alt="" /> <?php echo $text_wait; ?></div>');
+		},
+		complete: function() {
+			$('#button-review').attr('disabled', false);
+			$('.attention').remove();
+		},
+		success: function(data) {
+			if (data.error) {
+				$('#review-title').after('<div class="warning">' + data.error + '</div>');
+			}
+			
+			if (data.success) {
+				$('#review-title').after('<div class="success">' + data.success + '</div>');
+								
+				$('input[name=\'name\']').val('');
+				$('textarea[name=\'text\']').val('');
+				$('input[name=\'rating\']:checked').attr('checked', '');
+				$('input[name=\'captcha\']').val('');
+			}
+		}
+	});
+});
+$('#mizo1').click(function() {
+  $('#mizo1').hide('slow', function() {});
+});
+$('#mizo2').click(function() {
+  $('#mizo2').hide('slow', function() {});
+});
+$('#button-social').bind('click', function() {
+	$.ajax({
+		url: 'index.php?route=product/product/writeStag&product_id=<?php echo $product_id; ?>',
+		type: 'post',
+		dataType: 'json',
+		data: 'name1=' + encodeURIComponent($('input[name=\'tag\']').val()),
+		beforeSend: function() {
+			$('.success, .warning').remove();
+			$('#button-social').attr('disabled', true);
+		},
+		complete: function() {
+			$('#button-social').attr('disabled', false);
+		},
+		success: function(data) {
+			if (data.error) {
+				$('#mizo2').html('<div class="warning">' + data.error + '</div>');
+				$('#mizo2').show('fast', function() {});
+			}
+			
+			if (data.success) {
+				$('#mizo2').html('<div class="success">' + data.success + '</div>');
+				$('#mizo2').show('fast', function() {});
+								
+				$('input[name=\'tag\']').val('');
+			}
+			if (data.found) {
+				$('#mizo2').html('<div class="warning">' + data.found + '</div>');
+				$('#mizo2').show('fast', function() {});
+								
+				$('input[name=\'tag\']').val('');
+			}
+		}
+	});
+});
+$('#like').live('click',function(){
+	var likeBtn = $(this);
+	$.ajax({
+		url: 'index.php?route=product/product/addInterest&product_id=<?php echo $product_id;?>',
+		type: 'post',
+		dataType: 'json',
+		beforeSend: function() {
+			$('.success, .warning').remove();
+			likeBtn.prop('disabled', true);
+		},
+		success: function(data) {
+			likeBtn.prop('disabled', false);
+			if (data.error) {
+				$('#mizo1').html('<div class="warning">' + data.error + '</div>');
+				$('#mizo1').show('fast', function() {});
+			}
+			
+			if (data.success) {
+				likeBtn.attr({'value':'unlike','id':'unlike'});	
+				$('#mizo1').html('<div class="success">' + data.success + '</div>');
+				$('#mizo1').show('fast', function() {});
+			
+			}
+			
+		}
+
+	});
+});
+
+$('#unlike').live('click',function(){
+	var likeBtn = $(this);
+	$.ajax({
+		url: 'index.php?route=product/product/deleteInterest&product_id=<?php echo $product_id;?>',
+		type: 'post',
+		dataType: 'json',
+		beforeSend: function() {
+			$('.success, .warning').remove();
+			likeBtn.prop('disabled', true);
+		},
+		success: function(data) {
+			likeBtn.prop('disabled', false);
+			if (data.error) {
+				$('#mizo1').html('<div class="warning">' + data.error + '</div>');
+				$('#mizo1').show('fast', function() {});
+			}
+			
+			if (data.success) {
+				likeBtn.attr({'value':'like','id':'like'});	
+				$('#mizo1').html('<div class="success">' + data.success + '</div>');
+				$('#mizo1').show('fast', function() {});
+			}
+		}
+	});
+});
+
+//--></script> 
